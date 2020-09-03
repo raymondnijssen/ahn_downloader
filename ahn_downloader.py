@@ -31,7 +31,11 @@ class AhnDownloader():
             fn = f'{type_code}_{self.map_sheet}.LAZ'
         else:
             sub_dir = f'{self.resolution}m_{self.dem_type}'
-            fn = f'{type_code}{self.resolution}_{self.map_sheet}.ZIP'
+            if self.resolution == '5':
+                resolution = '5'
+            else:
+                resolution = ''
+            fn = f'{type_code}{resolution}_{self.map_sheet}.ZIP'
 
         result = _BASE_URL.format(sub_dir, fn)
         return (result, fn)

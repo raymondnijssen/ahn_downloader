@@ -18,9 +18,9 @@ _TYPE_CODES = {'laz': 'C', 'dtm': 'M', 'dsm': 'R'}
 
 class AhnDownloader():
 
-    def __init__(self, map_sheet, resolution='05', dem_type='dtm'):
+    def __init__(self, map_sheet, resolution='5', dem_type='dtm'):
         self.map_sheet = map_sheet.upper()
-        self.resolution = resolution
+        self.resolution = resolution # '5' or '05'
         self.dem_type = dem_type.lower()
 
 

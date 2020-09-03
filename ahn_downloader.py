@@ -1,5 +1,6 @@
 import urllib.request
 import os.path
+import ssl
 
 '''
 example url's
@@ -13,10 +14,7 @@ https://download.pdok.nl/rws/ahn3/v1_0/laz/C_45CN2.LAZ
 _BASE_URL = 'https://download.pdok.nl/rws/ahn3/v1_0/{}/{}'
 _TYPE_CODES = {'laz': 'C', 'dtm': 'M', 'dsm': 'R'}
 
-
-
-
-class AhnDownloader():
+class AhnDownloader:
 
     def __init__(self, map_sheet, resolution='5', dem_type='dtm'):
         self.map_sheet = map_sheet.upper()
@@ -43,10 +41,26 @@ class AhnDownloader():
 
     def download(self, output_dir):
         url, fn = self.get_url()
-        #fn = 'kaas.zip'
         output_fn = os.path.join(output_dir, fn)
         print(output_fn)
         response = urllib.request.urlopen(url)
+        data = response.read() # a `bytes` object
+        with open(output_fn, 'wb') as output_file:
+            output_file.write(data)
+
+    # on windows I get SSL certificate errors, so it is now possible you have to use download WITHOUT ssl_check
+    def download(self, output_dir, ssl_check=True):
+        url, fn = self.get_url()
+        #fn = 'kaas.zip'
+        output_fn = os.path.join(output_dir, fn)
+        print(output_fn)
+        if ssl_check:
+            response = urllib.request.urlopen(url, context=ctx)
+        else
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            response = urllib.request.urlopen(url, context=ctx)
         data = response.read() # a `bytes` object
         with open(output_fn, 'wb') as output_file:
             output_file.write(data)

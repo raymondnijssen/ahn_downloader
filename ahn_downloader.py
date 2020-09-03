@@ -55,8 +55,8 @@ class AhnDownloader:
         output_fn = os.path.join(output_dir, fn)
         print(output_fn)
         if ssl_check:
-            response = urllib.request.urlopen(url, context=ctx)
-        else
+            response = urllib.request.urlopen(url)
+        else:
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE

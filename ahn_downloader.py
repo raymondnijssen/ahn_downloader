@@ -1,4 +1,4 @@
-import urllib.request
+import urllib.request, urllib.error
 import os.path
 import ssl
 
@@ -31,10 +31,10 @@ class AhnDownloader:
         else:
             sub_dir = f'{self.resolution}m_{self.dem_type}'
             if self.resolution == '5':
-                resolution7 = '5'
+                resolution = '5'
             else:
-                resolution7 = ''
-            fn = f'{type_code}{resolution7}_{self.map_sheet}.ZIP'
+                resolution = ''
+            fn = f'{type_code}{resolution}_{self.map_sheet}.ZIP'
 
         result = _BASE_URL.format(sub_dir, fn)
         return (result, fn)
@@ -43,11 +43,14 @@ class AhnDownloader:
     def download(self, output_dir, ssl_check=True):
         url, fn = self.create_url()
         output_fn = os.path.join(output_dir, fn)
-        print(output_fn)
+        print(f'{url} --> {output_fn}')
         if self.already_downloaded(output_fn):
             print(f'  already downloaded file')
             return
         response = self.get_response(url)
+        if response is None:
+            print('Bad response')
+            return
         data = response.read() # a `bytes` object
         with open(output_fn, 'wb') as output_file:
             output_file.write(data)
@@ -55,19 +58,29 @@ class AhnDownloader:
 
     def get_response(self, url):
         if self.ssl_check:
-            ctx = ssl.create_default_context()
-            ctx.check_hostname = False
-            ctx.verify_mode = ssl.CERT_NONE
-            response = urllib.request.urlopen(url, context=ctx)
+            try:
+                ctx = ssl.create_default_context()
+                ctx.check_hostname = False
+                ctx.verify_mode = ssl.CERT_NONE
+                response = urllib.request.urlopen(url, context=ctx)
+                return response
+            except:
+                return None
         else:
-            response = urllib.request.urlopen(url)
-        return response
+            try:
+                response = urllib.request.urlopen(url)
+                return response
+            except:
+                return None
 
 
     def get_remote_file_size(self):
         url, fn = self.create_url()
-        site = self.get_response(url)
-        return site.length
+        response = self.get_response(url)
+        if response is None:
+            return -1
+        else:
+            return response.length
 
 
     def get_local_file_size(self, output_fn):
@@ -79,7 +92,13 @@ class AhnDownloader:
 
     def already_downloaded(self, output_fn):
         remote_size = self.get_remote_file_size()
+        if remote_size == -1:
+            return False
+
         local_size = self.get_local_file_size(output_fn)
+        if local_size is None:
+            return False
+
         print(f'  remote size: {remote_size}, local_size: {local_size}')
         return remote_size == local_size
 

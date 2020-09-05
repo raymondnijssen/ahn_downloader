@@ -22,8 +22,8 @@ with open(bladindex_fn, 'r') as csv_file:
         counter += 1
         bladnr = rec['bladnr']
         print(f'{bladnr} ({counter}/{total})')
-        if counter > 1300:
-            ad = AhnDownloader(bladnr, resolution='5', dem_type='dsm')
+        if True: #counter > 1360:
+            ad = AhnDownloader(bladnr, resolution='5', dem_type='dtm')
             ad.download('/home/raymond/data/ahn3')
             if counter > 5000:
                 break

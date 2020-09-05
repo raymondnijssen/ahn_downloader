@@ -1,5 +1,5 @@
 # ahn_downloader
-Tool for downloading Algemeen Hoogtebestand Nederland v3 (AHN3). 
+Tool for downloading Algemeen Hoogtebestand Nederland v3 (AHN3).
 
 ## ahn_downloader.py
 
@@ -22,6 +22,6 @@ ahn3:ahn3_bladindex
 ```
 from ahn_downloader import AhnDownloader
 
-ad = AhnDownloader('45cn2', resolution=5)
+ad = AhnDownloader('45cn2', resolution='5')
 ad.download('/home/raymond/tmp')
 ```
